@@ -1,0 +1,15 @@
+version: '3.8'
+services:
+  spring-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: baby-monitoring-system:latest
+    environment:
+      - SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}
+      - SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME}
+      - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./logs:/app/logs
