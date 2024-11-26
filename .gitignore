@@ -46,6 +46,7 @@ logs/
 # Docker files with sensitive information
 docker-compose.override.yml
 docker-compose.prod.yml
-
+src/main/resources/application-secret.properties
 # Specific directories
 /app/logs
+
