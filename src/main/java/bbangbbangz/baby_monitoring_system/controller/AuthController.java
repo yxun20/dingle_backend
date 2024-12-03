@@ -18,9 +18,11 @@ public class AuthController {
     public AuthController(AuthService authService) {
         this.authService = authService;
     }
-
+    
     @PostMapping("/login")
+    @ResponseBody
     public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest authRequest) {
+        System.out.println("Login endpoint hit with username: " + authRequest.getUsername());
         String token = authService.login(authRequest);
         return ResponseEntity.ok(new AuthResponse(token));
     }
