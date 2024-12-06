@@ -26,7 +26,7 @@ public class AuthService {
     // 사용자 등록
     public void register(AuthRequest authRequest) {
         User user = new User();
-        user.setUsername(authRequest.getUsername());
+        user.setName(authRequest.getUsername());
         user.setPassword(passwordEncoder.encode(authRequest.getPassword()));
         userRepository.save(user);
         System.out.println("User registered: " + authRequest.getUsername());
@@ -45,8 +45,8 @@ public class AuthService {
         }
 
         // JWT 생성
-        String jwt = jwtTokenProvider.createToken(user.getUsername());
-        System.out.println("Generated JWT for user: " + user.getUsername());
+        String jwt = jwtTokenProvider.createToken(user.getName());
+        System.out.println("Generated JWT for user: " + user.getName());
         System.out.println("JWT: " + jwt); // 생성된 JWT 출력
 
         return jwt;
