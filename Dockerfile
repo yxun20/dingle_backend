@@ -13,8 +13,8 @@ ENV JAR_FILE=*.jar
 ENV APP_HOME=/usr/app/
 
 WORKDIR $APP_HOME
-COPY --from=builder $APP_HOME/build/libs/$JAR_FILE .
+COPY --from=builder $APP_HOME/build/libs/$JAR_FILE ./app.jar
 
 EXPOSE 8080
 
-ENTRYPOINT ["java", "-jar", "${JAR_FILE}"]
+ENTRYPOINT ["java", "-jar", "app.jar"]

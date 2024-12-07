@@ -36,7 +36,7 @@ public class AuthService {
     // 사용자 로그인 및 JWT 생성
     public String login(AuthRequest authRequest) {
          // 사용자 확인
-        User user = userRepository.findByUsername(authRequest.getUsername())
+        User user = userRepository.findByName(authRequest.getUsername())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         // 비밀번호 확인
