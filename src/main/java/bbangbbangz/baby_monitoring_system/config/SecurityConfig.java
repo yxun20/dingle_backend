@@ -27,12 +27,17 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf().disable()
-            .authorizeHttpRequests()
-            .requestMatchers("/auth/**").permitAll() // 회원가입 및 로그인 요청은 인증 없이 허용
-            .anyRequest().authenticated() // 나머지 요청은 인증 필요
-            .and()
-            .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, userDetailsService), 
-                             UsernamePasswordAuthenticationFilter.class); // 필터 추가
+                .authorizeHttpRequests()
+                .requestMatchers(
+                        "/auth/**",
+                        "/swagger-ui/**",
+                        "/v3/api-docs/**",
+                        "/swagger-ui.html"
+                ).permitAll() // 회원가입 및 로그인 요청은 인증 없이 허용
+                .anyRequest().authenticated() // 나머지 요청은 인증 필요
+                .and()
+                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, userDetailsService),
+                        UsernamePasswordAuthenticationFilter.class); // 필터 추가
 
         return http.build();
     }
