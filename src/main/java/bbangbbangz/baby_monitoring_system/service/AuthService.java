@@ -47,7 +47,7 @@ public class AuthService {
         }
 
         // JWT 생성
-        String jwt = jwtTokenProvider.createToken(user.getName());
+        String jwt = jwtTokenProvider.createToken(user.getId().toString());
         System.out.println("Generated JWT for user: " + user.getName());
         System.out.println("JWT: " + jwt); // 생성된 JWT 출력
 

@@ -17,9 +17,9 @@ public class JwtTokenProvider {
     private static final long EXPIRATION_TIME = 3600000; // 1 hour in milliseconds
 
     // JWT 생성
-    public String createToken(String username) {
+    public String createToken(String sub) {
         return Jwts.builder()
-                .setSubject(username)
+                .setSubject(sub)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .signWith(SECRET_KEY)
