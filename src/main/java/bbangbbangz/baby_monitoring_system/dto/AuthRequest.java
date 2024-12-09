@@ -1,10 +1,19 @@
 package bbangbbangz.baby_monitoring_system.dto;
 
 public class AuthRequest {
+    private String email;
     private String username;
     private String password;
 
     // Getters and Setters
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public String getUsername() {
         return username;
     }
