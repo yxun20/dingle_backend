@@ -3,6 +3,7 @@ package bbangbbangz.baby_monitoring_system.controller;
 
 import bbangbbangz.baby_monitoring_system.dto.AuthRequest;
 import bbangbbangz.baby_monitoring_system.dto.AuthResponse;
+import bbangbbangz.baby_monitoring_system.dto.LoginRequest;
 import bbangbbangz.baby_monitoring_system.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.ResponseEntity;
@@ -26,8 +27,7 @@ public class AuthController {
             description = "유저 로그인시 JWT 토큰을 반환합니다."
     )
     @ResponseBody
-    public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest authRequest) {
-        System.out.println("Login endpoint hit with username: " + authRequest.getUsername());
+    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest authRequest) {
         String token = authService.login(authRequest);
         return ResponseEntity.ok(new AuthResponse(token));
     }

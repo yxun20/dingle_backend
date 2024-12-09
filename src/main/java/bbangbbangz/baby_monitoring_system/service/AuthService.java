@@ -2,6 +2,7 @@ package bbangbbangz.baby_monitoring_system.service;
 
 import bbangbbangz.baby_monitoring_system.config.JWT.JwtTokenProvider;
 import bbangbbangz.baby_monitoring_system.domain.User;
+import bbangbbangz.baby_monitoring_system.dto.LoginRequest;
 import bbangbbangz.baby_monitoring_system.repository.UserRepository;
 import bbangbbangz.baby_monitoring_system.dto.AuthRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -26,6 +27,7 @@ public class AuthService {
     // 사용자 등록
     public void register(AuthRequest authRequest) {
         User user = new User();
+        user.setEmail(authRequest.getEmail());
         user.setName(authRequest.getUsername());
         user.setPassword(passwordEncoder.encode(authRequest.getPassword()));
         userRepository.save(user);
@@ -34,9 +36,9 @@ public class AuthService {
     }
 
     // 사용자 로그인 및 JWT 생성
-    public String login(AuthRequest authRequest) {
+    public String login(LoginRequest authRequest) {
          // 사용자 확인
-        User user = userRepository.findByName(authRequest.getUsername())
+        User user = userRepository.findByEmail(authRequest.getEmail())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         // 비밀번호 확인
