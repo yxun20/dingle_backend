@@ -2,6 +2,7 @@ package bbangbbangz.baby_monitoring_system.config;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.security.SecurityScheme;
@@ -16,7 +17,14 @@ import org.springframework.web.filter.CorsFilter;
                 title = "빵빵이조 API 명세서",
                 description = "빵빵이조 API 명세서",
                 version = "v1"
-        )
+        ),
+        servers = {
+                @Server(url = "http://localhost:8080",
+                        description = "LOCAL"),
+                @Server(url = "https://bbang.justsloth.com",
+                        description = "PRODUCTION")
+        }
+
 )
 @Configuration
 public class OpenApiConfig {
