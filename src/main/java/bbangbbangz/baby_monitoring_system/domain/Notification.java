@@ -41,7 +41,6 @@ public class Notification {
     }
 
     // Getters and Setters
-    // omitted for brevity
 
     public enum NotificationType {
         SMS, CALL, PUSH
