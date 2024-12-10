@@ -24,7 +24,6 @@ public class ParentContact {
     private String phoneNumber;
 
     // Getters and Setters
-    // omitted for brevity
 
     public enum ParentType {
         MOM, DAD
