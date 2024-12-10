@@ -31,5 +31,4 @@ public class BabyStatistic {
     private int chokingCount;
 
     // Getters and Setters
-    // omitted for brevity
 }
