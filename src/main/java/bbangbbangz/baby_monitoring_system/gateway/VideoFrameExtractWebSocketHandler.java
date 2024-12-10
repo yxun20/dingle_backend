@@ -15,7 +15,7 @@ import java.nio.ByteBuffer;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class VideoAudioWebSocketHandler extends BinaryWebSocketHandler {
+public class VideoFrameExtractWebSocketHandler extends BinaryWebSocketHandler {
 
     private final ExecutorService executorService = Executors.newFixedThreadPool(4);
 
