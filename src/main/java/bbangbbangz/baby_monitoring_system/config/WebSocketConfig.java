@@ -13,7 +13,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(new VideoFrameExtractWebSocketHandler(), "/stream")
+        registry.addHandler(new VideoFrameExtractWebSocketHandler(), "/video")
                 .setAllowedOrigins("*");
         registry.addHandler(new AudioProcessorWebSocketHandler(), "/audio")
                 .setAllowedOrigins("*");
