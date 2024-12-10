@@ -31,7 +31,6 @@ public class BabyState {
     }
 
     // Getters and Setters
-    // omitted for brevity
 
     public enum StateType {
         FALL, CRY, CHOKING
