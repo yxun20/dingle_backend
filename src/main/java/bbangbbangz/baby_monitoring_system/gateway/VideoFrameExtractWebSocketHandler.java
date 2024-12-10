@@ -31,6 +31,9 @@ public class VideoFrameExtractWebSocketHandler extends BinaryWebSocketHandler {
         String sessionId = session.getId();
 
         try {
+            // 원본 비디오 스트림 데이터를 클라이언트로 전송
+            sendOriginalStreamToFrontend(message.getPayload().array(), sessionId);
+
             // 바이너리 데이터를 FFmpegFrameGrabber로 처리
             BufferedImage frame = extractFrame(message.getPayload().array());
 
@@ -108,6 +111,20 @@ public class VideoFrameExtractWebSocketHandler extends BinaryWebSocketHandler {
                 System.out.println("AI response sent to frontend for session: " + sessionId);
             } catch (IOException e) {
                 System.err.println("Error sending AI response to frontend for session: " + sessionId);
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void sendOriginalStreamToFrontend(byte[] videoStream, String sessionId) {
+        WebSocketSession session = userSessions.get(sessionId);
+
+        if (session != null && session.isOpen()) {
+            try {
+                session.sendMessage(new BinaryMessage(videoStream));
+                System.out.println("Original video stream sent to frontend for session: " + sessionId);
+            } catch (IOException e) {
+                System.err.println("Error sending original video stream to frontend for session: " + sessionId);
                 e.printStackTrace();
             }
         }
