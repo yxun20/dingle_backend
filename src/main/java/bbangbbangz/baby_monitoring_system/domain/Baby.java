@@ -40,7 +40,6 @@ public class Baby {
     }
 
     // Getters and Setters
-    // omitted for brevity
 
     public enum Gender {
         MALE, FEMALE
