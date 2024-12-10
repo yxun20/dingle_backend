@@ -4,20 +4,27 @@ import org.springframework.web.socket.BinaryMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.BinaryWebSocketHandler;
 
-import javax.sound.sampled.*;
+import javax.sound.sampled.AudioFileFormat;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.nio.ByteBuffer;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class AudioProcessorWebSocketHandler extends BinaryWebSocketHandler {
 
+    private final Map<String, WebSocketSession> userSessions = new ConcurrentHashMap<>();
     private final Map<String, AudioBuffer> userAudioBuffers = new ConcurrentHashMap<>();
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+        userSessions.put(session.getId(), session);
         userAudioBuffers.put(session.getId(), new AudioBuffer());
         System.out.println("New connection established: " + session.getId());
     }
@@ -33,33 +40,23 @@ public class AudioProcessorWebSocketHandler extends BinaryWebSocketHandler {
             // 10초 단위 데이터가 채워지면 WAV 파일로 변환하여 AI 서버로 전송
             if (buffer.isReadyForProcessing()) {
                 byte[] audioData = buffer.getAndClearData();
-                sendAudioToAIServer(audioData, sessionId);
+                processAudioData(audioData, sessionId);
             }
         }
     }
 
-    @Override
-    public void afterConnectionClosed(WebSocketSession session, org.springframework.web.socket.CloseStatus status) throws Exception {
-        userAudioBuffers.remove(session.getId());
-        System.out.println("Connection closed: " + session.getId());
-    }
-
-    private void sendAudioToAIServer(byte[] audioData, String sessionId) {
+    private void processAudioData(byte[] audioData, String sessionId) {
         try {
             byte[] wavData = convertToWav(audioData);
-            // AI 서버에 전송
-            System.out.println("Sending audio for session " + sessionId + " to AI server: " + wavData.length + " bytes");
 
-            // HttpClient httpClient = HttpClient.newHttpClient();
-            // HttpRequest request = HttpRequest.newBuilder()
-            //         .uri(URI.create("http://ai-server-url/process"))
-            //         .header("Content-Type", "audio/wav")
-            //         .POST(HttpRequest.BodyPublishers.ofByteArray(wavData))
-            //         .build();
-            // httpClient.send(request, HttpResponse.BodyHandlers.discarding());
+            // AI 서버로 전송
+            byte[] aiResponse = sendToAIServer(wavData);
+
+            // WebSocket 클라이언트로 전송
+            sendToFrontend(aiResponse, sessionId);
 
         } catch (Exception e) {
-            System.err.println("Error sending audio for session " + sessionId);
+            System.err.println("Error processing audio for session " + sessionId);
             e.printStackTrace();
         }
     }
@@ -73,6 +70,43 @@ public class AudioProcessorWebSocketHandler extends BinaryWebSocketHandler {
         AudioSystem.write(audioInputStream, AudioFileFormat.Type.WAVE, baos);
 
         return baos.toByteArray();
+    }
+
+    private byte[] sendToAIServer(byte[] wavData) throws IOException {
+        URL url = new URL("ai-server-url");
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setDoOutput(true);
+        connection.setRequestMethod("POST");
+        connection.setRequestProperty("Content-Type", "audio/wav");
+
+        connection.getOutputStream().write(wavData);
+        connection.getOutputStream().flush();
+
+        ByteArrayOutputStream responseBuffer = new ByteArrayOutputStream();
+        connection.getInputStream().transferTo(responseBuffer);
+
+        return responseBuffer.toByteArray();
+    }
+
+    private void sendToFrontend(byte[] aiResponse, String sessionId) {
+        WebSocketSession session = userSessions.get(sessionId);
+
+        if (session != null && session.isOpen()) {
+            try {
+                session.sendMessage(new BinaryMessage(aiResponse));
+                System.out.println("AI response sent to frontend for session: " + sessionId);
+            } catch (IOException e) {
+                System.err.println("Error sending AI response to frontend for session: " + sessionId);
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public void afterConnectionClosed(WebSocketSession session, org.springframework.web.socket.CloseStatus status) throws Exception {
+        userSessions.remove(session.getId());
+        userAudioBuffers.remove(session.getId());
+        System.out.println("Connection closed: " + session.getId());
     }
 
     private static class AudioBuffer {
