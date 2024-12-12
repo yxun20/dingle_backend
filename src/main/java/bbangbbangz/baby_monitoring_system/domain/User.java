@@ -1,9 +1,8 @@
 package bbangbbangz.baby_monitoring_system.domain;
 
-import bbangbbangz.baby_monitoring_system.dto.*;
-
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -29,9 +28,8 @@ public class User {
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Baby baby;
 
-
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ParentContact> parentContacts;
+    private List<ParentContact> parentContacts = new ArrayList<>(); // 초기화 추가
 
     @PrePersist
     protected void onCreate() {
@@ -52,6 +50,7 @@ public class User {
     }
 
     public void setEmail(String email) {
+        // 이메일 유효성 검증 로직 추가 (필요 시)
         this.email = email;
     }
 
@@ -60,6 +59,7 @@ public class User {
     }
 
     public void setPassword(String password) {
+        // 암호화 로직 적용 필요 (예: BCrypt)
         this.password = password;
     }
 
@@ -72,7 +72,7 @@ public class User {
     }
 
     public LocalDateTime getCreatedAt() {
-        return createdAt;
+        return createdAt; // Setter 제거로 수정 불가
     }
 
     public Baby getBaby() {
