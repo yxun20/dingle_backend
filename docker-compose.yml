@@ -16,7 +16,7 @@ services:
   fastapi-app:
     build:
       context: ./fastapi-app
-      dockerfile: Dockerfile-fastapi
+      dockerfile: Dockerfile
     image: fastapi-ai-app:latest
     ports:
       - "8000:8000"
