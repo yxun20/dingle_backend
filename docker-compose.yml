@@ -2,9 +2,9 @@ version: '3.8'
 services:
   spring-app:
     build:
-      context: .
+      context: .  # 프로젝트 루트에서 빌드
       dockerfile: Dockerfile
-    image: baby-monitoring-system:latest
+    image: baby-monitoring-system-spring:latest
     environment:
       - SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}
       - SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME}
@@ -12,11 +12,16 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - ./logs:/app/logs
+      - ./logs:/app/logs  # 로그 파일 공유
+
   fastapi-app:
     build:
-      context: ./fastapi-app
-      dockerfile: Dockerfile
-    image: fastapi-ai-app:latest
+      context: .
+      dockerfile: ./fastapp/Dockerfile
+    image: baby-monitoring-system-fastapi:latest
     ports:
-      - "8000:8000"
+      - "8000:8000"  # FastAPI 서비스의 포트 매핑
+    volumes:
+      - ./fastapp:/app  # FastAPI 디렉터리 공유
+    environment:
+      - PYTHONPATH=/app  # FastAPI 내부에서 모듈 참조 설정

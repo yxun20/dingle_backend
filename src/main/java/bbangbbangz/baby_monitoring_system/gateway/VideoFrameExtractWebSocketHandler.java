@@ -87,7 +87,7 @@ public class VideoFrameExtractWebSocketHandler extends BinaryWebSocketHandler {
     }
 
     private byte[] sendToAIServer(byte[] frameData) throws IOException {
-        URL url = new URL("/ai-address");
+        URL url = new URL("http://localhost:8000/predict/");
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setDoOutput(true);
         connection.setRequestMethod("POST");

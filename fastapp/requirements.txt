@@ -1,0 +1,12 @@
+fastapi
+uvicorn
+numpy
+opencv-python-headless
+torch
+ultralytics
+matplotlib
+pillow
+tensorflow
+pydub
+requests
+soundfile
