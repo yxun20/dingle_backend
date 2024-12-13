@@ -1,7 +1,7 @@
 package bbangbbangz.baby_monitoring_system.dto;
 
 /**
- * 엄마와 아빠의 전화번호 정보를 전달하기 위한 DTO
+ * 부모 연락처를 나타내는 DTO
  */
 public class ParentContactDTO {
 
