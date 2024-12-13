@@ -14,6 +14,15 @@ public class ParentContactService {
         this.parentContactRepository = parentContactRepository;
     }
 
+    public ParentContactDTO getParentContactsByUserId(Long userId) {
+        ParentContact parentContact = parentContactRepository.findByUserId(userId)
+                .orElseThrow(() -> new IllegalArgumentException("No parent contacts found for userId: " + userId));
+        ParentContactDTO dto = new ParentContactDTO();
+        dto.setMomPhoneNumber(parentContact.getMomPhoneNumber());
+        dto.setDadPhoneNumber(parentContact.getDadPhoneNumber());
+        return dto;
+    }
+
     public void saveParentContacts(ParentContactDTO parentContactDTO) {
         ParentContact parentContact = new ParentContact();
         parentContact.setMomPhoneNumber(parentContactDTO.getMomPhoneNumber());
