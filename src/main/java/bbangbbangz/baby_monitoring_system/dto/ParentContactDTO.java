@@ -1,30 +1,14 @@
-package bbangbbangz.baby_monitoring_system.domain;
+package bbangbbangz.baby_monitoring_system.dto;
 
-import jakarta.persistence.*;
+/**
+ * 엄마와 아빠의 전화번호 정보를 전달하기 위한 DTO
+ */
+public class ParentContactDTO {
 
-@Entity
-@Table(name = "parent_contacts")
-public class ParentContact {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(name = "mom_phone_number", nullable = false)
     private String momPhoneNumber;
-
-    @Column(name = "dad_phone_number", nullable = false)
     private String dadPhoneNumber;
 
     // Getters and Setters
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getMomPhoneNumber() {
         return momPhoneNumber;
     }
