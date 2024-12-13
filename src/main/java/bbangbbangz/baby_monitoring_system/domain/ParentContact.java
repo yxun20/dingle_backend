@@ -1,7 +1,6 @@
 package bbangbbangz.baby_monitoring_system.domain;
 
 import jakarta.persistence.*;
-import java.util.regex.Pattern;
 
 @Entity
 @Table(name = "parent_contacts")
@@ -11,19 +10,11 @@ public class ParentContact {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @Column(name = "mom_phone_number", nullable = false)
+    private String momPhoneNumber;
 
-    @Column(name = "parent_type", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private ParentType parentType;
-
-    @Column(name = "phone_number", nullable = false)
-    private String phoneNumber;
-
-    @Column(name = "email", nullable = false)
-    private String email;
+    @Column(name = "dad_phone_number", nullable = false)
+    private String dadPhoneNumber;
 
     // Getters and Setters with Validation
 
@@ -35,58 +26,30 @@ public class ParentContact {
         this.id = id;
     }
 
-    public User getUser() {
-        return user;
+    public String getMomPhoneNumber() {
+        return momPhoneNumber;
     }
 
-    public void setUser(User user) {
-        if (user == null) {
-            throw new IllegalArgumentException("User cannot be null");
+    public void setMomPhoneNumber(String momPhoneNumber) {
+        if (!isValidPhoneNumber(momPhoneNumber)) {
+            throw new IllegalArgumentException("Invalid mom phone number format");
         }
-        this.user = user;
+        this.momPhoneNumber = momPhoneNumber;
     }
 
-    public ParentType getParentType() {
-        return parentType;
+    public String getDadPhoneNumber() {
+        return dadPhoneNumber;
     }
 
-    public void setParentType(ParentType parentType) {
-        this.parentType = parentType;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        if (!isValidPhoneNumber(phoneNumber)) {
-            throw new IllegalArgumentException("Invalid phone number format");
+    public void setDadPhoneNumber(String dadPhoneNumber) {
+        if (!isValidPhoneNumber(dadPhoneNumber)) {
+            throw new IllegalArgumentException("Invalid dad phone number format");
         }
-        this.phoneNumber = phoneNumber;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        if (!isValidEmail(email)) {
-            throw new IllegalArgumentException("Invalid email format");
-        }
-        this.email = email;
+        this.dadPhoneNumber = dadPhoneNumber;
     }
 
     private boolean isValidPhoneNumber(String phoneNumber) {
         String phonePattern = "^[+]?[0-9]{10,15}$"; // 국제전화 번호 형식 검증
-        return Pattern.matches(phonePattern, phoneNumber);
-    }
-
-    private boolean isValidEmail(String email) {
-        String emailPattern = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$"; // 이메일 형식 검증
-        return Pattern.matches(emailPattern, email);
-    }
-
-    public enum ParentType {
-        MOM, DAD
+        return phoneNumber != null && phoneNumber.matches(phonePattern);
     }
 }
