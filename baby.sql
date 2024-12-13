@@ -44,8 +44,8 @@ CREATE TABLE BabyStatistics (
 CREATE TABLE ParentContacts (
     contact_id BIGINT AUTO_INCREMENT PRIMARY KEY, -- 연락처 고유 ID (자동 증가, 기본 키)
     baby_id BIGINT NOT NULL,                      -- 아기 ID (Babies 테이블의 외래 키)
-    parent_type ENUM('MOM', 'DAD') NOT NULL,      -- 부모 유형 (엄마, 아빠)
-    phone_number VARCHAR(15),                     -- 부모 전화번호
+    mom_phone_number VARCHAR(15) NOT NULL,        -- 엄마 전화번호
+    dad_phone_number VARCHAR(15) NOT NULL,        -- 아빠 전화번호
     FOREIGN KEY (baby_id) REFERENCES Babies(baby_id) ON DELETE CASCADE -- 아기 삭제 시 부모 정보도 삭제
 );
 
