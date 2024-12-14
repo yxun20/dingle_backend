@@ -1,6 +1,7 @@
 package bbangbbangz.baby_monitoring_system.domain;
 
 import jakarta.persistence.*;
+
 import java.time.LocalDate;
 
 @Entity
@@ -16,6 +17,11 @@ public class Baby {
 
     @Column(name = "birth_date", nullable = false)
     private LocalDate birthDate; // LocalDate로 변경
+
+
+    @OneToOne
+    @JoinColumn(name = "user_id") // 외래 키 설정
+    private User user;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
