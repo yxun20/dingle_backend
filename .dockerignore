@@ -1,0 +1,10 @@
+# 빌드 관련 불필요 파일 및 폴더 제외
+.git
+.gitignore
+*.log
+*.tmp
+*.swp
+node_modules/
+build/
+target/
+.env
