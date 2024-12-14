@@ -13,7 +13,6 @@ from utils.save_image import save_image
 from utils.risk_detection import (
     extract_bed_edges,
     detect_risk_with_edges,
-    detect_prone_via_contour,
     detect_prone_via_keypoints,
 )
 from utils.visualization import draw_keypoints, draw_pose_skeleton
@@ -119,7 +118,6 @@ async def upload_image(file: UploadFile = File(...)):
             })
 
         # --- 질식 자세 감지 ---
-        prone_contour_detected, contour_message = detect_prone_via_contour(person_mask)
         prone_keypoints_detected, keypoints_message = detect_prone_via_keypoints(pose_keypoints)
 
         # 움직임 감지
@@ -144,7 +142,7 @@ async def upload_image(file: UploadFile = File(...)):
             no_motion_time += frame_interval
 
         choking_status = "안전 - 움직임 감지됨"
-        if prone_contour_detected or prone_keypoints_detected:  # 질식 자세 판단
+        if prone_keypoints_detected:  # 질식 자세 판단
             if no_motion_time >= 90:  # 90초 이상 움직임이 없으면
                 choking_status = "질식 위험 감지됨!"
             else:
@@ -182,8 +180,8 @@ async def upload_image(file: UploadFile = File(...)):
 
         # 결과 반환
         response_data = {
-            "prone_status": "Detected" if prone_contour_detected or prone_keypoints_detected else "Not Detected",
-            "messages": [contour_message, keypoints_message],
+            "prone_status": "Detected" if prone_keypoints_detected else "Not Detected",
+            "messages": [ keypoints_message],
             "choking_status": choking_status,
             "image_url": f"/static/{image_filename}",
         }
