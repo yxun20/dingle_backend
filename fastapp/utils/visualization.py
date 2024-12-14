@@ -10,13 +10,24 @@ def draw_keypoints(image, keypoints, image_shape, original_shape):
     return image
 
 
-def draw_pose_skeleton(image, keypoints, connections, image_shape, original_shape):
+
+# 뼈대 시각화 함수
+def draw_pose_skeleton(image, keypoints, connections, img_shape, orig_shape):
     for connection in connections:
-        x1, y1, _ = keypoints[connection[0]]
-        x2, y2, _ = keypoints[connection[1]]
-        x1 = int(x1 * image_shape[1] / original_shape[1])
-        y1 = int(y1 * image_shape[0] / original_shape[0])
-        x2 = int(x2 * image_shape[1] / original_shape[1])
-        y2 = int(y2 * image_shape[0] / original_shape[0])
-        cv2.line(image, (x1, y1), (x2, y2), (255, 0, 0), 2)
+        start_idx, end_idx = connection
+        if start_idx >= len(keypoints) or end_idx >= len(keypoints):
+            continue
+
+        start_x, start_y, start_conf = keypoints[start_idx]
+        end_x, end_y, end_conf = keypoints[end_idx]
+        if start_conf < 0.5 or end_conf < 0.5:  # 신뢰도가 낮으면 생략
+            continue
+
+        start_x = int(start_x * (img_shape[1] / orig_shape[1]))
+        start_y = int(start_y * (img_shape[0] / orig_shape[0]))
+        end_x = int(end_x * (img_shape[1] / orig_shape[1]))
+        end_y = int(end_y * (img_shape[0] / orig_shape[0]))
+
+        cv2.line(image, (start_x, start_y), (end_x, end_y), (0, 255, 255), 2)  # 노란색 선
+
     return image
