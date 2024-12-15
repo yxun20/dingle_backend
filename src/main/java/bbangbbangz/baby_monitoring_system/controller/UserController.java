@@ -27,15 +27,17 @@ public class UserController {
     @Operation(summary = "회원 정보 조회", description = "현재 로그인한 사용자의 정보를 반환합니다.", security = @SecurityRequirement(name = "bearerAuth"))
     public ResponseEntity<User> getUserInfo(HttpServletRequest request) {
         try {
-            String token = extractToken(request); // Bearer 토큰 추출
-            String userId = jwtTokenProvider.getUsername(token); // 토큰에서 사용자 ID 추출
+            String token = extractToken(request);
+            String userId = jwtTokenProvider.getUsername(token);
 
             Optional<User> user = userRepository.findById(Long.valueOf(userId));
             return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(400).body(null); // 잘못된 요청
+            System.err.println("Invalid token: " + e.getMessage());
+            return ResponseEntity.status(400).body(null);
         } catch (Exception e) {
-            return ResponseEntity.status(401).build(); // 인증 실패
+            System.err.println("Unauthorized access: " + e.getMessage());
+            return ResponseEntity.status(401).build();
         }
     }
 
@@ -51,8 +53,9 @@ public class UserController {
                 User user = optionalUser.get();
 
                 if (updatedUser.getEmail() != null && !updatedUser.getEmail().equals(user.getEmail())) {
-                    if (userRepository.findByEmail(updatedUser.getEmail()).isPresent()) {
-                        return ResponseEntity.badRequest().body(null); // 이메일 중복 에러
+                    boolean emailExists = userRepository.existsByEmail(updatedUser.getEmail());
+                    if (emailExists) {
+                        return ResponseEntity.badRequest().body(null);
                     }
                 }
 
@@ -61,12 +64,13 @@ public class UserController {
 
                 userRepository.save(user);
                 return ResponseEntity.ok(user);
-            } else {
-                return ResponseEntity.notFound().build();
             }
+            return ResponseEntity.notFound().build();
         } catch (IllegalArgumentException e) {
+            System.err.println("Invalid token: " + e.getMessage());
             return ResponseEntity.status(400).body(null);
         } catch (Exception e) {
+            System.err.println("Unauthorized access: " + e.getMessage());
             return ResponseEntity.status(401).build();
         }
     }
