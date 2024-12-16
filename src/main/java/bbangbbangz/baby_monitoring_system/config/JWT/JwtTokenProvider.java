@@ -1,20 +1,22 @@
-package bbangbbangz.baby_monitoring_system.config.JWT;
-
 import io.jsonwebtoken.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import lombok.extern.slf4j.Slf4j;
-import java.util.Date;
-//JwtTokenProvider는 JwtAuthenticationFilter와 AuthService에서 사용.
 
 import javax.crypto.SecretKey;
+import java.util.Date;
 
-// JWT를 생성하고 유효성을 검증하여 사용자 인증에 활용
 @Component
 public class JwtTokenProvider {
-    private static final SecretKey SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256); // 안전한 키 생성
+
+    private final SecretKey SECRET_KEY;
     private static final long EXPIRATION_TIME = 3600000; // 1 hour in milliseconds
+
+    // 생성자에서 설정 파일에 있는 secretKey를 불러옴
+    public JwtTokenProvider(@Value("${jwt.secret}") String secret) {
+        this.SECRET_KEY = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
+    }
 
     // JWT 생성
     public String createToken(String sub) {
@@ -25,22 +27,22 @@ public class JwtTokenProvider {
                 .signWith(SECRET_KEY)
                 .compact();
     }
-    
-    
-    // 클라이언트가 보낸 JWT 토큰이 유효한지 검증증
+
+    // JWT 검증
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder()
-                    .setSigningKey(SECRET_KEY) // 검증에도 같은 키 사용
+                    .setSigningKey(SECRET_KEY)
                     .build()
                     .parseClaimsJws(token);
             return true;
-        } catch (Exception e) {
+        } catch (JwtException | IllegalArgumentException e) {
             return false;
         }
     }
-     // JWT에서 사용자 이름 추출
-     public String getUsername(String token) {
+
+    // JWT에서 사용자 이름 추출
+    public String getUsername(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(SECRET_KEY)
                 .build()
