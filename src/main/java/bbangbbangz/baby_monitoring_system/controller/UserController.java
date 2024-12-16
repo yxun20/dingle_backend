@@ -2,9 +2,11 @@ package bbangbbangz.baby_monitoring_system.controller;
 
 import bbangbbangz.baby_monitoring_system.config.JWT.JwtTokenProvider;
 import bbangbbangz.baby_monitoring_system.domain.User;
+import bbangbbangz.baby_monitoring_system.dto.MypageDto;
 import bbangbbangz.baby_monitoring_system.dto.ParentContactDTO;
 import bbangbbangz.baby_monitoring_system.repository.UserRepository;
 import bbangbbangz.baby_monitoring_system.service.ParentContactService;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletRequest;
@@ -12,7 +14,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequestMapping("/users")
 public class UserController {
@@ -27,20 +31,29 @@ public class UserController {
         this.userRepository = userRepository;
     }
 
-
     @GetMapping("/me")
-    @Operation(summary = "회원 정보 조회", description = "현재 로그인한 사용자의 정보를 반환합니다.", security = @SecurityRequirement(name = "bearerAuth"))
-    public ResponseEntity<User> getUserInfo(HttpServletRequest request) {
+    @Operation(summary = "회원 정보 조회-유빈", description = "현재 로그인한 사용자의 정보를 반환합니다.", security = @SecurityRequirement(name = "bearerAuth"))
+    public ResponseEntity<MypageDto> getUserInfo(HttpServletRequest request) {
         try {
             String token = extractToken(request); // Bearer 토큰 추출
-            String userId = jwtTokenProvider.getUsername(token); // 토큰에서 사용자 ID 추출
+            if (!jwtTokenProvider.validateToken(token)) {
+                return ResponseEntity.status(403).build(); // 토큰이 유효하지 않으면 403 반환
+            }
 
+            String userId = jwtTokenProvider.getUsername(token); // 토큰에서 사용자 ID 추출
             Optional<User> user = userRepository.findById(Long.valueOf(userId));
-            return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+
+            // MypageDto로 변환하여 필요한 데이터만 반환
+            return user.map(u -> ResponseEntity.ok(new MypageDto(u.getBaby(), u.getParentContacts())))
+                    .orElseGet(() -> ResponseEntity.notFound().build());
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(400).body(null); // 잘못된 요청
+        } catch (ExpiredJwtException e) {
+            log.error("Token expired", e);
+            return ResponseEntity.status(403).build(); // 만료된 토큰 처리
         } catch (Exception e) {
-            return ResponseEntity.status(401).build(); // 인증 실패
+            log.error("Authentication failed", e);
+            return ResponseEntity.status(403).build(); // 인증 실패
         }
     }
 
@@ -76,25 +89,12 @@ public class UserController {
         }
     }
 
+
     private String extractToken(HttpServletRequest request) {
         String authorizationHeader = request.getHeader("Authorization");
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
             throw new IllegalArgumentException("Authorization header is missing or invalid");
         }
         return authorizationHeader.substring(7); // Bearer 접두사 제거
-    }
-
-    @GetMapping("/parent-contacts/{userId}")
-    @Operation(summary = "부모 연락처 조회", description = "엄마와 아빠의 전화번호를 반환합니다.", security = @SecurityRequirement(name = "bearerAuth"))
-    public ResponseEntity<ParentContactDTO> getParentContacts(@PathVariable Long userId) {
-        ParentContactDTO parentContactDTO = parentContactService.getParentContactsByUserId(userId);
-        return ResponseEntity.ok(parentContactDTO);
-    }
-
-    @PostMapping("/parent-contacts")
-    @Operation(summary = "부모 연락처 저장", description = "엄마와 아빠의 전화번호를 저장합니다.", security = @SecurityRequirement(name = "bearerAuth"))
-    public ResponseEntity<String> saveParentContacts(@RequestBody ParentContactDTO parentContactDTO) {
-        parentContactService.saveParentContacts(parentContactDTO);
-        return ResponseEntity.ok("Parent contacts saved successfully");
     }
 }

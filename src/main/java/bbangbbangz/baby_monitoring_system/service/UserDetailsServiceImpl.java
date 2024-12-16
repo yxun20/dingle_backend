@@ -18,7 +18,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByName(username)
+        // username이 숫자(ID)라면 이를 Long으로 변환해서 findById 사용
+        User user = userRepository.findById(Long.parseLong(username))
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
         return org.springframework.security.core.userdetails.User
                 .withUsername(user.getName())

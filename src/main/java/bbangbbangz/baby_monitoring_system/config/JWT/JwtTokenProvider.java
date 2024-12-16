@@ -10,11 +10,14 @@ import java.util.Date;
 
 import javax.crypto.SecretKey;
 
-// JWT를 생성하고 유효성을 검증하여 사용자 인증에 활용
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Component
 public class JwtTokenProvider {
-    private static final SecretKey SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256); // 안전한 키 생성
-    private static final long EXPIRATION_TIME = 3600000; // 1 hour in milliseconds
+
+    private static final SecretKey SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+    private static final long EXPIRATION_TIME = 3600000;
 
     // JWT 생성
     public String createToken(String sub) {
@@ -25,27 +28,44 @@ public class JwtTokenProvider {
                 .signWith(SECRET_KEY)
                 .compact();
     }
-    
-    
-    // 클라이언트가 보낸 JWT 토큰이 유효한지 검증증
+
+    // JWT 검증
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder()
-                    .setSigningKey(SECRET_KEY) // 검증에도 같은 키 사용
+                    .setSigningKey(SECRET_KEY)
                     .build()
                     .parseClaimsJws(token);
+            log.info("Token validated successfully: {}", token); // 검증 성공 로그 추가
             return true;
+        } catch (ExpiredJwtException e) {
+            log.error("Expired JWT token: {}", e.getMessage());  // 만료된 토큰 로그
+        } catch (UnsupportedJwtException e) {
+            log.error("Unsupported JWT token: {}", e.getMessage()); // 지원되지 않는 토큰 로그
+        } catch (MalformedJwtException e) {
+            log.error("Malformed JWT token: {}", e.getMessage()); // 잘못된 형식의 토큰 로그
+        } catch (SignatureException e) {
+            log.error("Invalid JWT signature: {}", e.getMessage()); // 잘못된 서명 로그
         } catch (Exception e) {
-            return false;
+            log.error("JWT validation failed: {}", e.getMessage()); // 기타 검증 실패 로그
+        }
+        return false; // 검증 실패 시 false 반환
+    }
+
+    // 사용자 이름 추출
+    public String getUsername(String token) {
+        try {
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(SECRET_KEY)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+            log.info("Extracted username from token: {}", claims.getSubject());
+            return claims.getSubject(); // 토큰에서 Subject 추출
+        } catch (Exception e) {
+            log.error("Failed to extract username: {}", e.getMessage()); // 추출 실패 로그
+            throw new IllegalArgumentException("Invalid token"); // Invalid token 예외 던지기
         }
     }
-     // JWT에서 사용자 이름 추출
-     public String getUsername(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(SECRET_KEY)
-                .build()
-                .parseClaimsJws(token)
-                .getBody()
-                .getSubject();
-    }
+
 }
