@@ -13,7 +13,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
 
-
 @OpenAPIDefinition(
         info = @Info(
                 title = "빵빵이조 API 명세서",
@@ -43,8 +42,6 @@ public class OpenApiConfig {
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
 
-        //로컬 CORS 용
-        source.registerCorsConfiguration("/**", config);
         source.registerCorsConfiguration("/v3/api-docs", config);
         return new CorsFilter(source);
     }
