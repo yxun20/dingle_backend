@@ -1,7 +1,6 @@
 package bbangbbangz.baby_monitoring_system.domain;
 
 import jakarta.persistence.*;
-
 import java.time.LocalDate;
 
 @Entity
@@ -16,16 +15,15 @@ public class Baby {
     private String babyName;
 
     @Column(name = "birth_date", nullable = false)
-    private LocalDate birthDate; // LocalDate로 변경
-
-
-    @OneToOne
-    @JoinColumn(name = "user_id") // 외래 키 설정
-    private User user;
+    private LocalDate birthDate;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Gender gender;
+
+    @OneToOne
+    @JoinColumn(name = "user_id") // 외래 키 설정
+    private User user;
 
     // Getters and Setters
     public Long getId() {
@@ -58,6 +56,14 @@ public class Baby {
 
     public void setGender(Gender gender) {
         this.gender = gender;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public enum Gender {
