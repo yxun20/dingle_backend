@@ -12,6 +12,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
+
+
 @OpenAPIDefinition(
         info = @Info(
                 title = "빵빵이조 API 명세서",
@@ -39,8 +41,12 @@ public class OpenApiConfig {
         config.setAllowCredentials(true);
         config.addAllowedOrigin("*");
         config.addAllowedHeader("*");
+        config.addAllowedOrigin("http://localhost:8080");
+        config.addAllowedOrigin("https://bbang.justsloth.com");
         config.addAllowedMethod("*");
 
+        //로컬 CORS 용
+        source.registerCorsConfiguration("/**", config);
         source.registerCorsConfiguration("/v3/api-docs", config);
         return new CorsFilter(source);
     }
