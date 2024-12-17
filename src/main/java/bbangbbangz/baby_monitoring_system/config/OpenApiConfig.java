@@ -41,8 +41,6 @@ public class OpenApiConfig {
         config.setAllowCredentials(true);
         config.addAllowedOrigin("*");
         config.addAllowedHeader("*");
-        config.addAllowedOrigin("http://localhost:8080");
-        config.addAllowedOrigin("https://bbang.justsloth.com");
         config.addAllowedMethod("*");
 
         //로컬 CORS 용
