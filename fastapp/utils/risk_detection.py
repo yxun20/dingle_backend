@@ -90,4 +90,4 @@ def detect_prone_via_keypoints(pose_keypoints):
     if nose[2] < 0.5 and left_eye[2] < 0.5 and right_eye[2] < 0.5:
         return True, "경고: 엎드린 자세로 감지됨!"
 
-    return False, "누운 자세."
+    return False, "누운 자세.(머리가 위로, 질식사 아님)"
