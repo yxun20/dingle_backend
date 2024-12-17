@@ -10,8 +10,6 @@ import bbangbbangz.baby_monitoring_system.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Service
 public class MypageService {
 
@@ -31,20 +29,19 @@ public class MypageService {
             Baby baby = new Baby();
             baby.setBabyName(mypageRequest.getBaby().getBabyName());
             baby.setBirthDate(mypageRequest.getBaby().getBirthDate());
-            baby.setGender(Baby.Gender.valueOf(mypageRequest.getBaby().getGender().toUpperCase()));
             baby.setUser(user);
             user.setBaby(baby);
         }
 
         // ParentContact 정보 등록
         if (mypageRequest.getParentContacts() != null) {
-            for (var contactRequest : mypageRequest.getParentContacts()) {
-                ParentContact contact = new ParentContact();
-                contact.setMomPhoneNumber(contactRequest.getMomPhoneNumber());
-                contact.setDadPhoneNumber(contactRequest.getDadPhoneNumber());
-                contact.setUser(user);
-                user.getParentContacts().add(contact);
-            }
+            ParentContactRequest contactRequest = mypageRequest.getParentContacts();
+
+            ParentContact contact = new ParentContact();
+            contact.setMomPhoneNumber(contactRequest.getMomPhoneNumber());
+            contact.setDadPhoneNumber(contactRequest.getDadPhoneNumber());
+            contact.setUser(user);
+            user.setParentContacts(contact);
         }
 
         userRepository.save(user);
@@ -65,19 +62,17 @@ public class MypageService {
             }
             baby.setBabyName(updatedMypageRequest.getBaby().getBabyName());
             baby.setBirthDate(updatedMypageRequest.getBaby().getBirthDate());
-            baby.setGender(Baby.Gender.valueOf(updatedMypageRequest.getBaby().getGender().toUpperCase()));
         }
 
         // ParentContact 정보 수정
         if (updatedMypageRequest.getParentContacts() != null) {
-            user.getParentContacts().clear();
-            for (var contactRequest : updatedMypageRequest.getParentContacts()) {
-                ParentContact contact = new ParentContact();
-                contact.setMomPhoneNumber(contactRequest.getMomPhoneNumber());
-                contact.setDadPhoneNumber(contactRequest.getDadPhoneNumber());
-                contact.setUser(user);
-                user.getParentContacts().add(contact);
-            }
+            ParentContactRequest contactRequest = updatedMypageRequest.getParentContacts();
+
+            ParentContact contact = new ParentContact();
+            contact.setMomPhoneNumber(contactRequest.getMomPhoneNumber());
+            contact.setDadPhoneNumber(contactRequest.getDadPhoneNumber());
+            contact.setUser(user);
+            user.setParentContacts(contact);
         }
 
         userRepository.save(user);
@@ -93,19 +88,19 @@ public class MypageService {
             BabyRequest babyRequest = new BabyRequest();
             babyRequest.setBabyName(baby.getBabyName());
             babyRequest.setBirthDate(baby.getBirthDate());
-            babyRequest.setGender(baby.getGender().toString());
             mypageRequest.setBaby(babyRequest);
         }
 
-        if (user.getParentContacts() != null && !user.getParentContacts().isEmpty()) {
-            List<ParentContactRequest> parentContactRequests = user.getParentContacts().stream().map(contact -> {
-                ParentContactRequest contactRequest = new ParentContactRequest();
-                contactRequest.setMomPhoneNumber(contact.getMomPhoneNumber());
-                contactRequest.setDadPhoneNumber(contact.getDadPhoneNumber());
-                return contactRequest;
-            }).toList();
-            mypageRequest.setParentContacts(parentContactRequests);
+        if (user.getParentContacts() != null) {
+            ParentContact parentContact = user.getParentContacts();
+
+            ParentContactRequest contactRequest = new ParentContactRequest();
+            contactRequest.setMomPhoneNumber(parentContact.getMomPhoneNumber());
+            contactRequest.setDadPhoneNumber(parentContact.getDadPhoneNumber());
+
+            mypageRequest.setParentContacts(contactRequest);
         }
+
 
         return mypageRequest;
     }

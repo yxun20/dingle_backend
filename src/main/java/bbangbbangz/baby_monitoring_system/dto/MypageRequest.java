@@ -1,10 +1,9 @@
 package bbangbbangz.baby_monitoring_system.dto;
 
-import java.util.List;
 
 public class MypageRequest {
     private BabyRequest baby;
-    private List<ParentContactRequest> parentContacts;
+    private ParentContactRequest parentContacts;
 
     // Getters and Setters
     public BabyRequest getBaby() {
@@ -15,11 +14,11 @@ public class MypageRequest {
         this.baby = baby;
     }
 
-    public List<ParentContactRequest> getParentContacts() {
+    public ParentContactRequest getParentContacts() {
         return parentContacts;
     }
 
-    public void setParentContacts(List<ParentContactRequest> parentContacts) {
+    public void setParentContacts(ParentContactRequest parentContacts) {
         this.parentContacts = parentContacts;
     }
 }

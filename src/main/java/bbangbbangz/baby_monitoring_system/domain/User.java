@@ -29,8 +29,8 @@ public class User {
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Baby baby;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ParentContact> parentContacts = new ArrayList<>(); // 초기화 추가
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private ParentContact parentContacts; // 초기화 추가
 
     @PrePersist
     protected void onCreate() {
@@ -84,11 +84,11 @@ public class User {
         this.baby = baby;
     }
 
-    public List<ParentContact> getParentContacts() {
+    public ParentContact getParentContacts() {
         return parentContacts;
     }
 
-    public void setParentContacts(List<ParentContact> parentContacts) {
+    public void setParentContacts(ParentContact parentContacts) {
         this.parentContacts = parentContacts;
     }
 }

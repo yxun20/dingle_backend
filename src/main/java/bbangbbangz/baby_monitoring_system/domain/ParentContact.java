@@ -16,7 +16,7 @@ public class ParentContact {
     @Column(name = "dad_phone_number", nullable = false)
     private String dadPhoneNumber;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "user_id") // 외래 키 설정
     private User user;
 

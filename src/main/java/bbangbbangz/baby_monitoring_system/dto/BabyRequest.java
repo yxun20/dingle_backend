@@ -5,7 +5,6 @@ import java.time.LocalDate;
 public class BabyRequest {
     private String babyName;
     private LocalDate birthDate;
-    private String gender; // Enum 타입 대신 문자열 사용
 
     // Getters and Setters
     public String getBabyName() {
@@ -22,13 +21,5 @@ public class BabyRequest {
 
     public void setBirthDate(LocalDate birthDate) {
         this.birthDate = birthDate;
-    }
-
-    public String getGender() {
-        return gender;
-    }
-
-    public void setGender(String gender) {
-        this.gender = gender;
     }
 }
