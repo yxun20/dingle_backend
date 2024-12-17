@@ -39,7 +39,7 @@ no_motion_time = 0
 frame_interval = 1 / 30  # 30fps 기준
 
 
-@app.post("/pose-detection/")
+@app.post("/pose-detection")
 async def upload_image(file: UploadFile = File(...)):
     global previous_keypoints, no_motion_time
 
@@ -191,7 +191,7 @@ async def upload_image(file: UploadFile = File(...)):
         return JSONResponse(content={"error": str(e)}, status_code=500)
 
 
-@app.post("/cry-detection/")
+@app.post("/cry-detection")
 async def predict(file: UploadFile = File(...)):
     try:
         # 오디오 데이터 처리
