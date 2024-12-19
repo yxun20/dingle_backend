@@ -20,7 +20,7 @@ services:
       dockerfile: ./fastapp/Dockerfile
     image: baby-monitoring-system-fastapi:latest
     ports:
-      - "8000:8000"  # FastAPI 서비스의 포트 매핑
+      - "3001:8000"  # FastAPI 서비스의 포트 매핑
     volumes:
       - ./fastapp:/app  # FastAPI 디렉터리 공유
     environment:
